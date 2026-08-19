@@ -27,6 +27,7 @@ Gradio - Interactive web-based user interface'''
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import gradio as gr
 
 data = {
     "Month": ['Jan', 'Feb', 'March', 'April', 'May', 'June'],
@@ -130,3 +131,21 @@ def greeting(type_graph):
         plt.grid(True)
 
     return fig
+
+demo = gr.Interface(
+    fn=greeting,
+    inputs=gr.Radio([
+        "boxplot",
+        "lineplot",
+        "histogram",
+        "piechart",
+        "scatterplot",
+        "bargraph"
+    ]),
+    outputs=gr.Plot(label="Sales Data Visualization"),
+    api_name="predict",
+    title="Sales and Profits",
+    description="Choose a graph to see sales and profit"
+)
+
+demo.launch()
