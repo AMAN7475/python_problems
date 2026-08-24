@@ -5,7 +5,7 @@ import seaborn as sns
 import ollama
 
 
-# Function to Perform EDA
+# Function to Perform EDA & generate visualization
 def eda_analysis(file):
 
     # Get file path
@@ -28,8 +28,107 @@ def eda_analysis(file):
     # Missing Values
     missing_values = df.isnull().sum().to_string()
 
+    # Generate AI Insights
+    insights = generate_ai_insights(summary)
+
+    #Generate Data Visualization
+    plot_paths = generate_visualizations(df)
+
     return (
-        f"\nData Loaded Successfully!\n\n"
-        f"Summary:\n{summary}\n\n"
-        f"Missing Values:\n{missing_values}"
+    f"\nData Loaded Successfully!\n\n"
+    f"Summary:\n{summary}\n\n"
+    f"Missing Values:\n{missing_values}\n\n"
+    f"AI Insights:\n{insights}"
+    ), plot_paths
+
+# AI Powered Insights using Ollama
+def generate_ai_insights(df_summary):
+
+    prompt = f"""
+    Analyze the dataset summary and provide insights:
+
+    {df_summary}
+    """
+
+    response = ollama.chat(
+        model="gemma3:270m",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     )
+
+    return response['message']['content']
+
+
+# Function to Generate Data Visualization
+def generate_visualizations(df):
+
+    plot_paths = []
+
+    # Histograms for Numeric Columns
+    for col in df.select_dtypes(include=['number']).columns:
+
+        plt.figure(figsize=(6, 4))
+
+        sns.histplot(
+            df[col],
+            bins=30,
+            kde=True,
+            color="blue"
+        )
+
+        plt.title(f"Distribution of {col}")
+
+        path = f"{col}_distribution.png"
+
+        plt.savefig(path)
+
+        plot_paths.append(path)
+
+        plt.close()
+
+    # Correlation Heatmap
+    numeric_df = df.select_dtypes(include=['number'])
+
+    if not numeric_df.empty:
+
+        plt.figure(figsize=(8, 5))
+
+        sns.heatmap(
+            numeric_df.corr(),
+            annot=True,
+            cmap='coolwarm',
+            fmt=".2f",
+            linewidths=0.5
+        )
+
+        plt.title("Correlation Heatmap")
+
+        path = "correlation_heatmap.png"
+
+        plt.savefig(path)
+
+        plot_paths.append(path)
+
+        plt.close()
+
+    return plot_paths
+
+
+# Gradio Interface
+demo = gr.Interface(
+    fn=eda_analysis,
+    inputs=gr.File(type="filepath", label="Upload CSV"),
+    outputs=[
+        gr.Textbox(label="EDA Report"),
+        gr.Gallery(label="Data Visualizations")
+    ],
+    title="📊 LLM-Powered Exploratory Data Analysis (EDA)",
+    description="Upload any dataset CSV file and get automated EDA insights."
+)
+
+
+demo.launch(share=True)
