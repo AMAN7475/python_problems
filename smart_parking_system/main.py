@@ -1,44 +1,44 @@
-from models.vehicle import (
-    Bike,
-    Car,
-    Truck
-)
+from models.vehicle import Car
+from models.parking_slot import ParkingSlot
 
 
 def main():
-
-    bike = Bike(
-        "MP09BK1234",
-        "Rahul"
-    )
 
     car = Car(
         "MP09CR5678",
         "Aman"
     )
 
-    truck = Truck(
-        "MP04TR9999",
-        "Ramesh"
+    slot = ParkingSlot(
+        "M-1",
+        "MEDIUM"
     )
 
-    print(bike)
-    print(car)
-    print(truck)
+    print(slot)
 
-    print()
+    print("\nParking vehicle...\n")
+
+    slot.park_vehicle(car)
+
+    print(slot)
 
     print(
-        f"Bike Rate: ₹{bike.get_hourly_rate()}/hour"
+        f"Parked Vehicle: "
+        f"{slot.vehicle.vehicle_number}"
+    )
+
+    print("\nRemoving vehicle...\n")
+
+    removed_vehicle = (
+        slot.remove_vehicle()
     )
 
     print(
-        f"Car Rate: ₹{car.get_hourly_rate()}/hour"
+        f"Removed: "
+        f"{removed_vehicle.vehicle_number}"
     )
 
-    print(
-        f"Truck Rate: ₹{truck.get_hourly_rate()}/hour"
-    )
+    print(slot)
 
 
 if __name__ == "__main__":
