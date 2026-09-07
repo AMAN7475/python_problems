@@ -1,5 +1,6 @@
 from models.vehicle import Car
 from models.parking_slot import ParkingSlot
+from models.parking_ticket import ParkingTicket
 
 
 def main():
@@ -14,31 +15,26 @@ def main():
         "MEDIUM"
     )
 
-    print(slot)
-
-    print("\nParking vehicle...\n")
-
     slot.park_vehicle(car)
 
-    print(slot)
+    ticket = ParkingTicket(
+        car,
+        slot
+    )
+
+    print(ticket)
 
     print(
-        f"Parked Vehicle: "
-        f"{slot.vehicle.vehicle_number}"
+        f"\nCurrent Fee: "
+        f"₹{ticket.calculate_fee()}"
     )
 
-    print("\nRemoving vehicle...\n")
-
-    removed_vehicle = (
-        slot.remove_vehicle()
-    )
+    ticket.close_ticket()
 
     print(
-        f"Removed: "
-        f"{removed_vehicle.vehicle_number}"
+        f"\nFinal Fee: "
+        f"₹{ticket.calculate_fee()}"
     )
-
-    print(slot)
 
 
 if __name__ == "__main__":
