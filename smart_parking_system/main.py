@@ -1,39 +1,38 @@
-from models.vehicle import Car
-from models.parking_slot import ParkingSlot
-from models.parking_ticket import ParkingTicket
+from services.payment_service import (
+    CashPayment,
+    CardPayment,
+    UPIPayment
+)
+
+
+def process_payment(
+    payment_method,
+    amount
+):
+
+    payment_method.pay(amount)
 
 
 def main():
 
-    car = Car(
-        "MP09CR5678",
-        "Aman"
+    amount = 150
+
+    print("Cash Payment:")
+    process_payment(
+        CashPayment(),
+        amount
     )
 
-    slot = ParkingSlot(
-        "M-1",
-        "MEDIUM"
+    print("\nCard Payment:")
+    process_payment(
+        CardPayment(),
+        amount
     )
 
-    slot.park_vehicle(car)
-
-    ticket = ParkingTicket(
-        car,
-        slot
-    )
-
-    print(ticket)
-
-    print(
-        f"\nCurrent Fee: "
-        f"₹{ticket.calculate_fee()}"
-    )
-
-    ticket.close_ticket()
-
-    print(
-        f"\nFinal Fee: "
-        f"₹{ticket.calculate_fee()}"
+    print("\nUPI Payment:")
+    process_payment(
+        UPIPayment(),
+        amount
     )
 
 
