@@ -12,6 +12,10 @@ from services.parking_service import (
     ParkingLot
 )
 
+from services.payment_service import (
+    UPIPayment
+)
+
 from exceptions.parking_exceptions import (
     ParkingError
 )
@@ -23,8 +27,6 @@ def setup_parking_lot():
         "Indore Smart Parking"
     )
 
-    # Bike slots
-
     for i in range(1, 3):
 
         parking_lot.add_slot(
@@ -34,8 +36,6 @@ def setup_parking_lot():
             )
         )
 
-    # Car slots
-
     for i in range(1, 3):
 
         parking_lot.add_slot(
@@ -44,8 +44,6 @@ def setup_parking_lot():
                 "MEDIUM"
             )
         )
-
-    # Truck slot
 
     parking_lot.add_slot(
         ParkingSlot(
@@ -80,6 +78,8 @@ def main():
             "Ramesh"
         )
 
+        # Entry
+
         bike_ticket = (
             parking_lot.park_vehicle(
                 bike
@@ -99,15 +99,38 @@ def main():
         )
 
         print(
-            "Vehicles parked successfully!\n"
+            "Vehicles parked successfully!"
         )
 
-        print(bike_ticket)
-        print(car_ticket)
-        print(truck_ticket)
+        # Exit car
 
         print(
-            "\nParking Summary:"
+            "\nCar Exit Process"
+        )
+
+        completed_ticket, fee = (
+            parking_lot.exit_vehicle(
+                car_ticket.ticket_id,
+                UPIPayment()
+            )
+        )
+
+        print(
+            f"\nVehicle exited successfully."
+        )
+
+        print(
+            f"Parking Fee: ₹{fee}"
+        )
+
+        print(
+            completed_ticket
+        )
+
+        # Final summary
+
+        print(
+            "\nFinal Parking Summary:"
         )
 
         summary = (
@@ -124,6 +147,12 @@ def main():
 
         print(
             f"Parking Error: {error}"
+        )
+
+    except Exception as error:
+
+        print(
+            f"Unexpected Error: {error}"
         )
 
 
